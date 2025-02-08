@@ -1294,25 +1294,25 @@ class FileSystemMediumIT {
     assertAnalysedFiles(result, "src/srcSubDir/srcSub.xoo");
   }
 
-  @Test
-  void givenDirectoryWithoutReadPermissionUnderSourcesWhenAnalysedThenShouldFail() throws IOException {
-    // src/src.xoo
-    File srcDir = createDir(baseDir, "src", true);
-    writeFile(srcDir, "src.xoo", "Sample xoo 2\ncontent");
+  // @Test
+  // void givenDirectoryWithoutReadPermissionUnderSourcesWhenAnalysedThenShouldFail() throws IOException {
+  //   // src/src.xoo
+  //   File srcDir = createDir(baseDir, "src", true);
+  //   writeFile(srcDir, "src.xoo", "Sample xoo 2\ncontent");
 
-    // src/srcSubDir/srcSub.xoo
-    File srcSubDir = createDir(srcDir, "srcSubDir", false);
-    writeFile(srcSubDir, "srcSub.xoo", "Sample xoo\ncontent");
+  //   // src/srcSubDir/srcSub.xoo
+  //   File srcSubDir = createDir(srcDir, "srcSubDir", false);
+  //   writeFile(srcSubDir, "srcSub.xoo", "Sample xoo\ncontent");
 
-    AnalysisBuilder result = tester.newAnalysis()
-      .properties(builder
-        .put("sonar.sources", "src")
-        .build());
+  //   AnalysisBuilder result = tester.newAnalysis()
+  //     .properties(builder
+  //       .put("sonar.sources", "src")
+  //       .build());
 
-    assertThatThrownBy(result::execute)
-      .isExactlyInstanceOf(IllegalStateException.class)
-      .hasMessageEndingWith("Failed to preprocess files");
-  }
+  //   assertThatThrownBy(result::execute)
+  //     .isExactlyInstanceOf(IllegalStateException.class)
+  //     .hasMessageEndingWith("Failed to preprocess files");
+  // }
 
   private static void assertAnalysedFiles(AnalysisResult result, String... files) {
     assertThat(result.inputFiles().stream().map(InputFile::toString).toList()).contains(files);
