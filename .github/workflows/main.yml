@@ -16,7 +16,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Ensure full Git history is available
+          fetch-depth: 0 
 
       - name: Install Dependencies
         run: |
@@ -24,22 +24,21 @@ jobs:
 
       - name: Compile & Test SonaQube
         run: |
-          cd sonarqube-master
           ./gradlew build -Dsonar.log.level=INFO --warning-mode=all | tee build.log
 
       - name: Compress Build Log
-        run: gzip -9 sonarqube-master/build.log
+        run: gzip -9 build.log
       
       - name: Upload Build Log Artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-log
-          path: sonarqube-master/build.log.gz  # Ensure this file exists
+          path: build.log.gz 
           retention-days: 7
 
       - name: Unzip app and Launch
         run: |
-          cd sonarqube-master/sonar-application/build/distributions/
+          cd sonar-application/build/distributions/
           unzip sonar-application-25.2-SNAPSHOT.zip
           cd sonarqube-25.2-SNAPSHOT
           ./bin/linux-x86-64/sonar.sh start
