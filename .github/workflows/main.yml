@@ -1,0 +1,45 @@
+name: Build and SonarQube Analysis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  build_sonarqube:
+    runs-on: ubuntu-latest
+    container:
+      image: eclipse-temurin:17-jdk
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Ensure full Git history is available
+
+      - name: Install Dependencies
+        run: |
+          apt-get update && apt-get install -y git && apt-get install -y git unzip
+
+      - name: Compile & Test SonaQube
+        run: |
+          cd sonarqube-master
+          ./gradlew build -Dsonar.log.level=INFO --warning-mode=all | tee build.log
+
+      - name: Compress Build Log
+        run: gzip -9 sonarqube-master/build.log
+      
+      - name: Upload Build Log Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: sonarqube-master/build.log.gz  # Ensure this file exists
+          retention-days: 7
+
+      - name: Unzip app and Launch
+        run: |
+          cd sonarqube-master/sonar-application/build/distributions/
+          unzip sonar-application-25.2-SNAPSHOT.zip
+          cd sonarqube-25.2-SNAPSHOT
+          ./bin/linux-x86-64/sonar.sh start
